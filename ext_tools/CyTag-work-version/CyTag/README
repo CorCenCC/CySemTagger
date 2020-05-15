@@ -1,0 +1,175 @@
+*************************************************************************************
+* CyTag - A collection of surface-level natural language processing tools for Welsh *
+*************************************************************************************
+
+CyTag is a collection of surface-level natural language processing tools for Welsh, including:
+--- text segmenter (cy_textsegmenter)
+--- sentence splitter (cy_sentencesplitter)
+--- tokeniser (cy_tokeniser)
+--- part-of-speech (POS) tagger (cy_postagger)
+
+As well as being run individually, the CyTag.py script allows for all of the tools to be run in sequence as a complete pipeline (the default option) or for a customised pipeline to be specified. Please see further sections of this file for more information on running the individual tools, the full default pipeline, or customised pipelines.
+
+CyTag has been developed at Cardiff University as part of the CorCenCC project (www.corcencc.org).
+
+
+**********************
+* CyTag DEPENDENCIES *
+**********************
+
+CyTag has been developed and tested on Ubuntu, and so these instructions should be followed with this in mind.
+
+CyTag is written for python3, and so a recent version of python3 should be downloaded before using the tools. Downloads for python can be found at https://www.python.org/downloads/ (version 3.5.1 recommended).
+
+As well as python3 itself, the following python libraries will be needed to run various CyTag components. CyTag will check for them and will stop running if they are missing:
+--- pip3 (or pip) (sudo apt-get install pip3)
+--- lxml (sudo pip3 install lxml)
+--- numpy (sudo pip3 install numpy)
+--- progress (sudo pip3 install progress)
+
+CyTag depends on having a working version of VISL's Constraint Grammar v3 (a.k.a. CG-3). For Ubuntu/Debian, a pre-built CG-3 package can be easily installed from a ready-made nightly repository:
+--- wget https://apertium.projectjj.com/apt/install-nightly.sh -O - | sudo bash
+--- sudo apt-get install cg3
+
+See 'http://visl.sdu.dk/cg3/chunked/installation.html' for installation instructions for other platforms.
+
+
+*****************
+* RUNNING CyTag *
+*****************
+
+With python and CG-3 installed, CyTag can then be run from the command line.
+
+In all examples, *PATH* refers to the path leading from the current directory to the directory in which the CyTag folder is located.
+
+
+********************************
+* PASSING INPUT FILES TO CyTag *
+********************************
+
+In linux, for example, the following command will run the full, default pipeline:
+
+--- python3 *PATH*/CyTag/CyTag.py [input_files (required)] [output_name (required)] [output_directory (optional)] [customised pipeline (optional)] [output_format (required)]
+
+*** ARGUMENTS ***
+
+* [input_files] (REQUIRED) - refers to the Welsh input text or texts to be processed. 
+
+* [output_name] (REQUIRED) - specify a name to be used for the output text and files.
+
+* [output_directory] (OPTIONAL) - specify a folder to be created in *PATH*/CyTag/outputs/ and into which the output files from running CyTag will be saved. If no output directory is specified, a folder with the same name as the input_file will be created in *PATH*/CyTag/outputs, and the output from running CyTag stored there. The 'outputs' folder will be created in *PATH*/CyTag/ automatically when running CyTag for the first time.
+
+* [customised pipeline] (OPTIONAL) - specify a specific part of the CyTag pipeline to run to, for when running the complete sequence of tools (text segmenter -> sentence splitter -> tokeniser -> part-of-speech tagger) is not necessary. Options here are 'seg', 'sent', 'tok', or 'pos'.
+
+* [output_format] (REQUIRED) - specify a file format to print output to. Options here are 'tsv', 'xml', or 'all'.
+
+
+*************************************
+* PASSING A STRING OF TEXT TO CyTAG *
+*************************************
+
+Alternatively, a single text string (enclosed in quotation marks) can be passed as an argument to CyTag, which will run the full pipeline up to the POS tagger and return TSV values for each token to the standard output:
+
+--- python3 *PATH*/CyTag/CyTag.py "Dw i'n hoffi coffi. Dw i eisiau bwyta'r cynio hefyd!"
+
+*************************
+* TAKING STANDARD INPUT *
+*************************
+
+CyTag also accepts Welsh text passed via standard input. For example, in Linux:
+
+--- echo "Dw i'n hoffi coffi. Dw i eisiau bwyta'r cynio hefyd!" | python3 *PATH*/CyTag/CyTag.py
+
+--- cat [EXAMPLE].txt | python3 *PATH*/CyTag/CyTag.py
+
+--- python3 *PATH*/CyTag/CyTag.py < [EXAMPLE].txt
+
+
+********************
+* EVALUATING CyTag *
+********************
+
+CyTag can also be evaluated by comparing an XML-formatted CyTag output file against a gold standard (CyTag XML-formatted) dataset:
+
+--- python3 *PATH*/CyTag/CyTag.py evaluate ['soft' (optional)] [gold_standard_file (required)] [cytag_output_file (required)]
+
+*** ARGUMENTS ***
+
+* 'soft' (OPTIONAL) - an argument that can be added to run a more lenient evaluation. 
+
+* [gold_standard_file] (REQUIRED) - the gold standard (CyTag XML-formatted) dataset to use as a baseline.
+
+* [cytag_output_file] (REQUIRED) - the CyTag XML-formatted output file being evaluated.
+
+************
+
+
+************
+* CONTENTS *
+************
+
+--- CyTag/
+-------	__init__.py
+-------	CyTag.py (run full / customised natural language processing pipelines on Welsh texts)
+-------	src/ (files on which CyTag is dependent)
+-----------	cy_taggedobject.py (python class for storing and manipulating CyTag formatted output)
+-----------	cy_postagger.py (part-of-speech (POS) tagger for Welsh)
+-----------	cy_tokeniser.py (tokeniser for Welsh)
+-----------	cy_sentencesplitter.py (sentence splitter for Welsh)
+-----------	cy_textsegmenter.py (text segmentation tool)
+----------- evaluate_cytag.py (compare CyTag output to gold standard data)
+-----------	shared/ (files used across the CyTag pipeline)
+---------------	check_libraries.py (check for and install required python libraries)
+---------------	create_folders.py (create output folders)
+---------------	get_lines.py (split a string of input text or group of input files into separate lines)
+---------------	load_gazetteers.py (load information from the CorCenCC gazetteers)
+---------------	load_lexicon.py (load the CorCenCC lexicon)
+-------	cy_gazetteers/ (folder containing gazetteers and dictionaries used by CyTag)
+-----------	corcencc.abbreviations
+-----------	corcencc.acronyms
+-----------	corcencc.givennames_f
+-----------	corcencc.givennames_m
+-----------	corcencc.places
+-----------	corcencc.surnames
+-----------	cy_gazetteerextractor.py (script for extracting CorCenCC gazetteers from DBpedia [1])
+-----------	contractions_and_prefixes.json
+-----------	cy_contractionprefix_extractor.py (script for extracting 'contractions_and_prefixes.json')
+-----------	client_secret.json (allows 'cy_contractionprefix_extractor.py' to communicate with Google Sheets API)
+-------	grammars/ (folder containing files of Constraint Grammar rules for Welsh)
+-----------	other_versions/ (empty folder for storing alternative grammar files if needed)
+-----------	cy_grammar_2017-08-01
+-------	lexicon/ (folder containing the Eurfa-derived CorCenCC lexicon [2] and associated scripts)
+-----------	previous_versions/ (empty folder for storing old lexicons if needed)
+-----------	CyTag_tag-sequences (.json-formatted dictionary of common tag sequences)
+-----------	CyTag_tag-token_coverage (.json-formatted dictionary of most-common tags for a number of tokens)
+-----------	corcencc_lexicon_2017-08-23
+-----------	cy_coveragemapper.py (map most-common tag for each token in a corpus to a .json-formatted dictionary)
+-----------	cy_tagsequence_mapper.py (map common tag sequences to a .json-formatted dictionary)
+------- outputs/ (folder for storing output from running CyTag)
+----------- gold_corpus/
+--------------- cy_goldcorpus_2017-09-12.xml (200 sentences with manually checked POS, for evaluation)
+-------	vislcg3.zip	(source code for VISL's Constraint Grammar (v3) [3])
+				
+[1] - for more information on DBpedia, see: http://wiki.dbpedia.org/
+[2] - for more information on Eurfa, see: http://eurfa.org.uk
+[3] - for more information on Constraint Grammar, see: https://visl.sdu.dk/constraint_grammar.html
+
+
+***********
+* CONTACT *
+***********
+
+Questions about CyTag can be directed to: 
+--- Steve Neale <steveneale3000@gmail.com> <NealeS2@cardiff.ac.uk>
+--- Kevin Donnelly <kevin@dotmon.com>
+
+
+***********
+* LICENSE *
+***********
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses>.
