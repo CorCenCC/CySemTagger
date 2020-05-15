@@ -8,7 +8,7 @@ This repo holds the rule based semantic tagger by Scott Piao as part of the CorC
 This Welsh Semantic Tagger, named CySemTagger, is developed in Lancaster University, UK for the [CorCenCC Project](http://www.corcencc.org/) based on Lancaster [USAS framework](http://ucrel.lancs.ac.uk/usas/).
 
 This version of software is dependent on Welsh POS tagger, [CyTag](https://github.com/CorCenCC/CyTag). Therefore, users need to pre-install CyTag (including all dependencies), following one of the options below:
-1) Download and install CyTag in the provided folder "ext-tools/CyTag-work-version/". Then the tool can automatically link to CyTag.
+1) Download and install CyTag in the provided folder "ext-tools/CyTag-work-version/". Then the tool can automatically link to [CyTag](https://github.com/CorCenCC/CyTag).
 2) Download and install CyTag in any directory in your machine. Then adjust the property parameter "welsh.cytag.path" in the file "src/ucrelcorcencc.properties" to point to the [CyTag](https://github.com/CorCenCC/CyTag)'s installation folder, then re-compile the package. If you adjust the parameter within the Jar file using an archive manager, no need to re-compile the package.
 
 ## Usage
